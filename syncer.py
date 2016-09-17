@@ -1,5 +1,5 @@
 #!/usr/bin/python2.7
-
+import sys
 import vk
 import requests
 import shutil
@@ -18,10 +18,14 @@ user = api.users.get(user_ids=uid)
 audio = api.audio.get(owner_id=int(user[0]['uid']))
 for track in audio:
     if type(track) is dict:
-        track_dst = './music/' + track['artist'] + ' - ' + track['title']
+        artist = track['artist'].replace('/', ' ')
+        title = track['title'].replace('/', ' ')
+        track_dst = './music/' + artist + ' - ' + title + '.mp3'
         if not os.path.isfile(track_dst):
+            sys.stdout.write(track_dst)
+            sys.stdout.flush()
             response = requests.get(track['url'], stream=True)
             with open(track_dst, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
             del response
-            print track_dst + ' ok'
+            print ' ok'
